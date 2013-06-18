@@ -24,13 +24,16 @@ class Views(object):
         raise NotImplementedError()
 
     def __getitem__(self, view_name):
-        for row in self.jenkins._data['views']:
-            if row['name'] == view_name:
-                return View(
-                    row['url'],
-                    row['name'],
-                    self.jenkins)
-        raise UnknownView(view_name)
+        row = next((view for view in self.jenkins._data['views'] 
+                              if view['name']==view_name),
+                    None)
+        if row:
+            return View(
+                row['url'],
+                row['name'],
+                self.jenkins)
+        else:
+            raise UnknownView(view_name)
 
     def __iteritems__(self):
         """

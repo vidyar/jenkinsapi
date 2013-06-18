@@ -26,12 +26,29 @@ class TestView(unittest.TestCase):
 
     def testRepr(self):
         # Can we produce a repr string for this object
-        repr(self.v)
+        self.assertEquals(repr(self.v), '<jenkinsapi.view.View FodFanFo>')
+
+    def testStr(self):
+        # Can we produce a repr string for this object
+        self.assertEquals(str(self.v), 'FodFanFo')
 
     def testName(self):
         with self.assertRaises(AttributeError):
             self.v.id()
         self.assertEquals(self.v.name, 'FodFanFo')
+
+    def test_get_job_dict(self):
+        jobs = self.v.get_job_dict()
+        self.assertTrue(isinstance(jobs, dict))
+        self.assertTrue(len(jobs)==2)
+        self.assertTrue(jobs.get('foo'))
+        self.assertTrue(jobs.get('foo')=='http://halob:8080/job/foo/')
+
+    def test_length(self):
+        self.assertTrue(len(self.v)==2)
+
+    def test_job_in_view(self):
+        self.assertTrue(self.v['foo'])
 
 if __name__ == '__main__':
     unittest.main()

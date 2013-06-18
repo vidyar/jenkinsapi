@@ -16,10 +16,10 @@ class View(JenkinsBase):
     def __str__(self):
         return self.name
 
-    def __getitem__(self, str_job_id ):
-        assert isinstance( str_job_id, str )
-        api_url = self.python_api_url( self.get_job_url( str_job_id ) )
-        return Job( api_url, str_job_id, self.jenkins_obj )
+    def __getitem__(self, job_name):
+        assert isinstance(job_name, str)
+        api_url = self.python_api_url(self.get_job_url(job_name))
+        return Job(api_url, job_name, self.jenkins_obj)
 
     def delete(self):
         """
@@ -36,58 +36,55 @@ class View(JenkinsBase):
     def iteritems(self):
         for name, url in self.get_job_dict().iteritems():
             api_url = self.python_api_url( url )
-            yield name, Job( api_url, name, self.jenkins_obj )
+            yield name, Job(api_url, name, self.jenkins_obj)
 
     def values(self):
-        return [ a[1] for a in self.iteritems() ]
+        return [job_row[1] for job_row in self.iteritems()]
 
     def items(self):
-        return [ a for a in self.iteritems() ]
+        return [job_row for job_row in self.iteritems() ]
 
     def _get_jobs( self ):
-        if not self._data.has_key( "jobs" ):
-            pass
-        else:
-            for viewdict in self._data["jobs"]:
-                yield viewdict["name"], viewdict["url"]
+        for viewdict in self._data.get("jobs"):
+            yield viewdict["name"], viewdict["url"]
 
     def get_job_dict(self):
-        return dict( self._get_jobs() )
+        return dict(self._get_jobs())
 
     def __len__(self):
-        return len( self.get_job_dict().keys() )
+        return len(self.get_job_dict().keys())
 
-    def get_job_url( self, str_job_name ):
+    def get_job_url(self, job_name):
         try:
             job_dict = self.get_job_dict()
-            return job_dict[ str_job_name ]
+            return job_dict[job_name]
         except KeyError:
             #noinspection PyUnboundLocalVariable
             all_views = ", ".join( job_dict.keys() )
-            raise KeyError("Job %s is not known - available: %s" % ( str_job_name, all_views ) )
+            raise KeyError("Job %s is not known - available: %s" % ( job_name, all_views ) )
 
     def get_jenkins_obj(self):
         return self.jenkins_obj
 
-    def add_job(self, str_job_name, job=None):
+    def add_job(self, job_name, job=None):
         """
         Add job to a view
 
-        :param str_job_name: name of the job to be added
+        :param job_name: name of the job to be added
         :param job: Job object to be added
         :return: True if job has been added, False if job already exists or
          job not known to Jenkins
         """
         if not job:
-            if str_job_name in self.get_job_dict():
+            if job_name in self.get_job_dict():
                 log.error('Job %s is already in the view %s' %
-                        (str_job_name, self.name))
+                        (job_name, self.name))
                 return False
-            elif not self.get_jenkins_obj().has_job(str_job_name):
-                log.error('Job "%s" is not known to Jenkins' % str_job_name)
+            elif not self.get_jenkins_obj().has_job(job_name):
+                log.error('Job "%s" is not known to Jenkins' % job_name)
                 return False
 
-            job = self.jenkins_obj.get_job(str_job_name)
+            job = self.jenkins_obj.get_job(job_name)
 
         jobs = self._data.setdefault('jobs', [])
         jobs.append({'name': job.name, 'url': job.baseurl})
@@ -122,11 +119,8 @@ class View(JenkinsBase):
         return True
 
     def _get_nested_views(self):
-        if not self._data.has_key( "views" ):
-            pass
-        else:
-            for viewdict in self._data["views"]:
-                yield viewdict["name"], viewdict["url"]
+        for viewdict in self._data.get("views"):
+            yield viewdict["name"], viewdict["url"]
 
     def get_nested_view_dict(self):
-        return dict( self._get_nested_views() )
+        return dict(self._get_nested_views())
