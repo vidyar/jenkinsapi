@@ -33,7 +33,7 @@ JOB_CONFIG = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 1 localhost | tee out.txt
+      <command>ping -c 1 127.0.0.1 | tee out.txt
 echo $A &gt; a.txt
 echo $B &gt; b.txt</command>
     </hudson.tasks.Shell>

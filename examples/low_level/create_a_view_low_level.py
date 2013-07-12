@@ -5,7 +5,7 @@ This is how JenkinsAPI creates views
 import requests
 import json
 
-url = 'http://localhost:8080/createView'
+url = 'http://127.0.0.1:8080/createView'
 
 str_view_name = "blahblah123"
 params = {}# {'name': str_view_name}

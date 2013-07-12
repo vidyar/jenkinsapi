@@ -21,7 +21,7 @@ class TestQueue(unittest.TestCase):
         req = Requester('foo', 'bar')
 
         with self.assertRaises(AssertionError) as na:
-            req_return = req.get_request_dict(url='http://', params='wrong', 
+            req_return = req.get_request_dict(url='http://', params='wrong',
                 data=None, headers=None)
         self.assertTrue(
                 na.exception.message=="Params must be a dict, got 'wrong'")
@@ -29,7 +29,7 @@ class TestQueue(unittest.TestCase):
     def test_get_request_dict_correct_params(self):
         req = Requester('foo', 'bar')
 
-        req_return = req.get_request_dict(url='http://', 
+        req_return = req.get_request_dict(url='http://',
             params={'param': 'value'},
             data=None, headers=None)
 
@@ -41,7 +41,7 @@ class TestQueue(unittest.TestCase):
         req = Requester('foo', 'bar')
 
         with self.assertRaises(AssertionError) as na:
-            req_return = req.get_request_dict(url='http://', params={}, 
+            req_return = req.get_request_dict(url='http://', params={},
                 data=None, headers='wrong')
         self.assertTrue(
                 na.exception.message=="headers must be a dict, got 'wrong'")
@@ -49,7 +49,7 @@ class TestQueue(unittest.TestCase):
     def test_get_request_dict_correct_headers(self):
         req = Requester('foo', 'bar')
 
-        req_return = req.get_request_dict(url='http://', 
+        req_return = req.get_request_dict(url='http://',
             params={'param': 'value'},
             data=None, headers={'header': 'value'})
 
@@ -60,7 +60,7 @@ class TestQueue(unittest.TestCase):
     def test_get_request_dict_data_passed(self):
         req = Requester('foo', 'bar')
 
-        req_return = req.get_request_dict(url='http://', 
+        req_return = req.get_request_dict(url='http://',
             params={'param': 'value'},
             data='some data', headers={'header': 'value'})
 
@@ -72,30 +72,30 @@ class TestQueue(unittest.TestCase):
     def test_get_request_dict_data_not_passed(self):
         req = Requester('foo', 'bar')
 
-        req_return = req.get_request_dict(url='http://', 
+        req_return = req.get_request_dict(url='http://',
             params={'param': 'value'},
             data=None, headers={'header': 'value'})
 
         self.assertTrue(isinstance(req_return, dict))
         self.assertFalse(req_return.get('data'))
 
-    @mock.patch.object(requests, 'get')
+    @mock.patch.object(requests.Session, 'get')
     def test_get_url(self, _get):
         _get.return_value = 'SUCCESS'
         req = Requester('foo', 'bar')
-        self.assertTrue(req.get_url('http://dummy', 
+        self.assertTrue(req.get_url('http://dummy',
                         params={'param': 'value'},
                         headers=None)=='SUCCESS')
-        
-    @mock.patch.object(requests, 'post')
+
+    @mock.patch.object(requests.Session, 'post')
     def test_get_url(self, _post):
         _post.return_value = 'SUCCESS'
         req = Requester('foo', 'bar')
-        self.assertTrue(req.post_url('http://dummy', 
+        self.assertTrue(req.post_url('http://dummy',
                         params={'param': 'value'},
                         headers=None)=='SUCCESS')
-        
-    @mock.patch.object(requests, 'post')
+
+    @mock.patch.object(requests.Session, 'post')
     def test_post_xml_and_confirm_status_empty_xml(self, _post):
         _post.return_value = 'SUCCESS'
         req = Requester('foo', 'bar')
@@ -107,7 +107,7 @@ class TestQueue(unittest.TestCase):
 
         self.assertTrue(ae.exception.message=="Unexpected type of parameter 'data': <type 'NoneType'>. Expected (str, dict)")
 
-    @mock.patch.object(requests, 'post')
+    @mock.patch.object(requests.Session, 'post')
     def test_post_xml_and_confirm_status_some_xml(self, _post):
         response = requests.Response()
         response.status_code = 200
@@ -119,7 +119,7 @@ class TestQueue(unittest.TestCase):
                         data='<xml/>')
         self.assertTrue(isinstance(ret, requests.Response))
 
-    @mock.patch.object(requests, 'post')
+    @mock.patch.object(requests.Session, 'post')
     def test_post_and_confirm_status_empty_data(self, _post):
         _post.return_value = 'SUCCESS'
         req = Requester('foo', 'bar')
@@ -131,7 +131,7 @@ class TestQueue(unittest.TestCase):
 
         self.assertTrue(ae.exception.message=="Unexpected type of parameter 'data': <type 'NoneType'>. Expected (str, dict)")
 
-    @mock.patch.object(requests, 'post')
+    @mock.patch.object(requests.Session, 'post')
     def test_post_and_confirm_status_some_data(self, _post):
         response = requests.Response()
         response.status_code = 200
@@ -143,7 +143,7 @@ class TestQueue(unittest.TestCase):
                         data='some data')
         self.assertTrue(isinstance(ret, requests.Response))
 
-    @mock.patch.object(requests, 'post')
+    @mock.patch.object(requests.Session, 'post')
     def test_post_and_confirm_status_bad_result(self, _post):
         response = requests.Response()
         response.status_code = 500
@@ -159,7 +159,7 @@ class TestQueue(unittest.TestCase):
         print ae.exception.message
         self.assertTrue(ae.exception.message=="Operation failed. url=None, data=some data, headers={'Content-Type': 'application/x-www-form-urlencoded'}, status=500, text=")
 
-    @mock.patch.object(requests, 'get')
+    @mock.patch.object(requests.Session, 'get')
     def test_get_and_confirm_status(self, _get):
         response = requests.Response()
         response.status_code = 200
@@ -170,7 +170,7 @@ class TestQueue(unittest.TestCase):
                         params={'param': 'value'})
         self.assertTrue(isinstance(ret, requests.Response))
 
-    @mock.patch.object(requests, 'get')
+    @mock.patch.object(requests.Session, 'get')
     def test_get_and_confirm_status_bad_result(self, _get):
         response = requests.Response()
         response.status_code = 500

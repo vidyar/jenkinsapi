@@ -32,6 +32,13 @@ class Requester(object):
 
         self.username = username
         self.password = password
+        self._req_session = None
+
+    @property
+    def session(self):
+        if not self._req_session:
+            self._req_session = requests.Session()
+        return self._req_session
 
     def get_request_dict(self, url, params, data, headers):
         requestKwargs = {}
@@ -56,12 +63,11 @@ class Requester(object):
 
     def get_url(self, url, params=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, None, headers)
-        return requests.get(url, **requestKwargs)
-
+        return self.session.get(url, **requestKwargs)
 
     def post_url(self, url, params=None, data=None, headers=None):
         requestKwargs = self.get_request_dict(url, params, data, headers)
-        return requests.post(url, **requestKwargs)
+        return self.session.post(url, **requestKwargs)
 
     def post_xml_and_confirm_status(self, url, params=None, data=None, valid=None):
         headers = {'Content-Type': 'text/xml'}

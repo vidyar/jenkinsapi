@@ -23,18 +23,18 @@ class TestQueue(unittest.TestCase):
 
     URL_DATA = {}
 
-    URL_DATA['http://localhost:8080/api/python/'] = \
+    URL_DATA['http://127.0.0.1:8080/api/python/'] = \
         {'jobs':[
             {'name':'utmebvpxrw', 
-              'url':'http://localhost/job/utmebvpxrw'}
+              'url':'http://127.0.0.1/job/utmebvpxrw'}
               ]
         }
 
-    URL_DATA['http://localhost/job/utmebvpxrw/api/python/'] = \
+    URL_DATA['http://127.0.0.1/job/utmebvpxrw/api/python/'] = \
         {}
 
 
-    URL_DATA['http://localhost:8080/queue/api/python/'] = \
+    URL_DATA['http://127.0.0.1:8080/queue/api/python/'] = \
         {'items': [{'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
                                      'userId': None,
                                      'userName': 'anonymous'}]}],
@@ -47,7 +47,7 @@ class TestQueue(unittest.TestCase):
             'stuck': False,
             'task': {'color': 'grey',
                      'name': 'klscuimkqo',
-                     'url': 'http://localhost:8080/job/klscuimkqo/'},
+                     'url': 'http://127.0.0.1:8080/job/klscuimkqo/'},
             'why': 'Waiting for next available executor'},
            {'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
                                      'userId': None,
@@ -61,7 +61,7 @@ class TestQueue(unittest.TestCase):
             'stuck': False,
             'task': {'color': 'grey',
                      'name': 'vluyhzzepl',
-                     'url': 'http://localhost:8080/job/vluyhzzepl/'},
+                     'url': 'http://127.0.0.1:8080/job/vluyhzzepl/'},
             'why': 'Waiting for next available executor'},
            {'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
                                      'userId': None,
@@ -75,14 +75,14 @@ class TestQueue(unittest.TestCase):
             'stuck': False,
             'task': {'color': 'grey',
                      'name': 'utmebvpxrw',
-                     'url': 'http://localhost:8080/job/utmebvpxrw/'},
+                     'url': 'http://127.0.0.1:8080/job/utmebvpxrw/'},
             'why': 'Waiting for next available executor'}]}
 
 
     @mock.patch.object(JenkinsBase, 'get_data', mockGetData)
     def setUp(self):
-        self.J = Jenkins('http://localhost:8080')  # Jenkins
-        self.q = Queue('http://localhost:8080/queue', self.J)
+        self.J = Jenkins('http://127.0.0.1:8080')  # Jenkins
+        self.q = Queue('http://127.0.0.1:8080/queue', self.J)
 
     def testRepr(self):
         self.assertTrue(repr(self.q))

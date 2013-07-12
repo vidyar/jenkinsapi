@@ -10,4 +10,4 @@ def getSCMInfroFromLatestGoodBuild(url, jobName, username=None, password=None):
     return lgb.get_revision()
 
 if __name__ == '__main__':
-    print getSCMInfroFromLatestGoodBuild('http://localhost:8080', 'fooJob')
+    print getSCMInfroFromLatestGoodBuild('http://127.0.0.1:8080', 'fooJob')

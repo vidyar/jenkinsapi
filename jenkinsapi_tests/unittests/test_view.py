@@ -61,7 +61,7 @@ class TestView(unittest.TestCase):
         # def __init__(self, url, name, jenkins_obj)
         self.J = mock.MagicMock()  # Jenkins object
         self.J.has_job.return_value = False
-        self.v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
+        self.v = View('http://127.0.0.1:800/view/FodFanFo', 'FodFanFo', self.J)
 
     def testRepr(self):
         # Can we produce a repr string for this object
@@ -115,7 +115,7 @@ class TestView(unittest.TestCase):
         _view_poll.return_value = self.DATA
         J = mock.MagicMock()  # Jenkins object
         J.has_job.return_value = True
-        v = View('http://localhost:800/view/FodFanFo', 'FodFanFo', self.J)
+        v = View('http://127.0.0.1:800/view/FodFanFo', 'FodFanFo', self.J)
 
         result = v.add_job('bar')
         self.assertTrue(result)

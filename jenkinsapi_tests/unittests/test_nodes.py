@@ -157,16 +157,16 @@ class TestNode(unittest.TestCase):
 
         # def __init__(self, baseurl, nodename, jenkins_obj):
 
-        self.J = Jenkins('http://localhost:8080')
+        self.J = Jenkins('http://127.0.0.1:8080')
         self.ns = self.J.get_nodes()
-        #self.ns = Nodes('http://localhost:8080/computer', 'bobnit', self.J)
+        #self.ns = Nodes('http://127.0.0.1:8080/computer', 'bobnit', self.J)
 
     def testRepr(self):
         # Can we produce a repr string for this object
         repr(self.ns)
 
     def testCheckURL(self):
-        self.assertEquals(self.ns.baseurl, 'http://localhost:8080/computer')
+        self.assertEquals(self.ns.baseurl, 'http://127.0.0.1:8080/computer')
 
     @mock.patch.object(Node, '_poll')
     def testGetMasterNode(self, _poll_node):

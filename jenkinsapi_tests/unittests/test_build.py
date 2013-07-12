@@ -27,7 +27,7 @@ class test_build(unittest.TestCase):
         'number': 1,
         'result': 'SUCCESS',
         'timestamp': 1370042140000,
-        'url': 'http://localhost:8080/job/foo/1/'}
+        'url': 'http://127.0.0.1:8080/job/foo/1/'}
 
     @mock.patch.object(Build, '_poll')
     def setUp(self, _poll):

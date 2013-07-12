@@ -52,7 +52,7 @@ class test_build(unittest.TestCase):
  'number': 3,
  'result': 'SUCCESS',
  'timestamp': 1372553675652,
- 'url': 'http://localhost:8080/job/git_yssrtigfds/3/'}
+ 'url': 'http://127.0.0.1:8080/job/git_yssrtigfds/3/'}
 
 
     @mock.patch.object(Build, '_poll')

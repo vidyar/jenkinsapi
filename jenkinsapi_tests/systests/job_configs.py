@@ -38,7 +38,7 @@ LONG_RUNNING_JOB = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 200 localhost</command>
+      <command>ping -c 200 127.0.0.1</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -61,7 +61,7 @@ SHORTISH_JOB = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 10 localhost</command>
+      <command>ping -c 10 127.0.0.1</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>
@@ -140,7 +140,7 @@ JOB_WITH_ARTIFACTS = """
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-      <command>ping -c 5 localhost | tee out.txt
+      <command>ping -c 5 127.0.0.1 | tee out.txt
 gzip &lt; out.txt &gt; out.gz</command>
     </hudson.tasks.Shell>
   </builders>

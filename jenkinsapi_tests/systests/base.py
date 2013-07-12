@@ -6,7 +6,7 @@ from jenkinsapi.jenkins import Jenkins
 class BaseSystemTest(unittest.TestCase):
 
     def setUp(self):
-        self.jenkins = Jenkins('http://localhost:8080')
+        self.jenkins = Jenkins('http://127.0.0.1:8080')
         self._delete_all_jobs()
         self._delete_all_views()
 

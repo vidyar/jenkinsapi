@@ -16,19 +16,19 @@ class TestViews(unittest.TestCase):
         mock_requester.post_url = mock.MagicMock(return_value='')
         _poll.return_value = {'views': [
                         {'name': 'All',
-                         'url': 'http://localhost:8080/views/All'},
+                         'url': 'http://127.0.0.1:8080/views/All'},
                         {'name': 'NewView',
-                         'url': 'http://localhost:8080/views/NewView'},
+                         'url': 'http://127.0.0.1:8080/views/NewView'},
                         ]}
         _base_poll.return_value = _poll.return_value
-        J = Jenkins('http://localhost:8080/',
+        J = Jenkins('http://127.0.0.1:8080/',
                     username='foouser', password='foopassword',
                     requester=mock_requester)
 
         new_view = J.views.create('NewView')
         self.assertTrue(isinstance(new_view, View))
         self.assertEquals(new_view.baseurl,
-                'http://localhost:8080/views/NewView')
+                'http://127.0.0.1:8080/views/NewView')
 
     def test_create_existing_view(self):
         """
@@ -37,7 +37,7 @@ class TestViews(unittest.TestCase):
         """
         def mockGetData(JJ, url):
             DATA = {}
-            DATA['http://localhost:8080/api/python/'] = \
+            DATA['http://127.0.0.1:8080/api/python/'] = \
                 {'views':[dict(name='NewView', url='http://xxxxx/yyyy')]}
             DATA['http://xxxxx/yyyy/api/python/'] = \
                 {}
@@ -51,7 +51,7 @@ class TestViews(unittest.TestCase):
 
         with mock.patch.object(JenkinsBase, 'get_data', mockGetData):
 
-            J = Jenkins('http://localhost:8080',
+            J = Jenkins('http://127.0.0.1:8080',
                     username='foouser',
                     password='foopassword')
 
@@ -63,7 +63,7 @@ class TestViews(unittest.TestCase):
     # def test_delete_inexisting_view(self, _poll):
     #     mock_requester = Requester(username='foouser', password='foopassword')
     #     mock_requester.get_url = mock.MagicMock(return_value='<div/>')
-    #     J = Jenkins('http://localhost:8080/',
+    #     J = Jenkins('http://127.0.0.1:8080/',
     #                 username='foouser', password='foopassword',
     #                 requester=mock_requester)
     #     delete_result = J.delete_view(str_view_name='NewView')

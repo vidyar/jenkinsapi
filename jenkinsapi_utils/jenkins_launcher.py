@@ -56,7 +56,8 @@ class JenkinsLancher(object):
     def __init__(self, war_path, plugin_urls=None):
         self.war_path = war_path
         self.war_directory, self.war_filename = os.path.split(self.war_path)
-        self.jenkins_home = tempfile.mkdtemp(prefix='jenkins-home-')
+        # self.jenkins_home = tempfile.mkdtemp(prefix='jenkins-home-')
+        self.jenkins_home = '/tmp/jenkins-test'
         self.jenkins_process = None
         self.q = Queue.Queue()
         self.plugin_urls = plugin_urls or []
@@ -76,28 +77,29 @@ class JenkinsLancher(object):
         config_dest_file.write(config_source.encode('UTF-8'))
 
     def install_plugins(self):
-        for i, url in enumerate(self.plugin_urls):
-            self.install_plugin(url, i)
+        # for i, url in enumerate(self.plugin_urls):
+        #     self.install_plugin(url, i)
+        pass
 
     def install_plugin(self, hpi_url, i):
         plugin_dir = os.path.join(self.jenkins_home, 'plugins')
         if not os.path.exists(plugin_dir):
             os.mkdir(plugin_dir)
-        
+
         log.info("Downloading %s", hpi_url)
         log.info("Plugins will be installed in '%s'" % plugin_dir)
         # FIXME: This is kinda ugly but works
         filename = "plugin_%s.hpi" % i
         plugin_path = os.path.join(plugin_dir, filename)
         with open(plugin_path, 'wb') as h:
-            request = requests.get(hpi_url)
-            h.write(request.content)    
+            request = requests.get(hpi_url, verify=False)
+            h.write(request.content)
 
     def stop(self):
         log.info("Shutting down jenkins.")
         self.jenkins_process.terminate()
         self.jenkins_process.wait()
-        shutil.rmtree(self.jenkins_home)
+        # shutil.rmtree(self.jenkins_home)
 
     def block_until_jenkins_ready(self, timeout):
         start_time = datetime.datetime.now()
@@ -105,7 +107,7 @@ class JenkinsLancher(object):
 
         while True:
             try:
-                Jenkins('http://localhost:8080')
+                Jenkins('http://127.0.0.1:8080')
                 log.info('Jenkins is finally ready for use.')
             except JenkinsAPIException:
                 log.info('Jenkins is not yet ready...')
@@ -168,7 +170,7 @@ if __name__ == '__main__':
     log.info("Hello!")
 
     jl = JenkinsLancher(
-        '/home/sal/workspace/jenkinsapi/src/jenkinsapi_tests/systests/jenkins.war'
+        '/tmp/jenkins-test/jenkins.war'
         )
     jl.start()
     log.info("Jenkins was launched...")
