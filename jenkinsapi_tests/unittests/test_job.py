@@ -1,10 +1,11 @@
 import mock
 import unittest
 
+from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.job import Job
+from jenkinsapi.build import Build
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.exceptions import NoBuildData
-
 
 class TestJob(unittest.TestCase):
     JOB_DATA = {"actions": [],
@@ -39,6 +40,27 @@ class TestJob(unittest.TestCase):
             "upstreamProjects": []}
 
     URL_DATA = {'http://halob:8080/job/foo/api/python/':JOB_DATA}
+
+    BUILD_DATA = {
+        'actions': [{'causes': [{'shortDescription': 'Started by user anonymous',
+                                 'userId': None,
+                                 'userName': 'anonymous'}]}],
+        'artifacts': [],
+        'building': False,
+        'builtOn': '',
+        'changeSet': {'items': [], 'kind': None},
+        'culprits': [],
+        'description': None,
+        'duration': 106,
+        'estimatedDuration': 106,
+        'executor': None,
+        'fullDisplayName': 'foo #1',
+        'id': '2013-05-31_23-15-40',
+        'keepLog': False,
+        'number': 1,
+        'result': 'SUCCESS',
+        'timestamp': 1370042140000,
+        'url': 'http://localhost:8080/job/foo/1/'}
 
     def fakeGetData(self, url, *args):
         try:
@@ -156,6 +178,22 @@ class TestJob(unittest.TestCase):
         with self.assertRaises(NoBuildData):
             j.get_revision_dict()
 
+    @mock.patch.object(Job, '_poll')
+    @mock.patch.object(JenkinsBase, '_poll')
+    def test_last_good_build(self, _poll_j, _poll):
+        _poll.return_value = TestJob.JOB_DATA
+        _poll_j.return_value = TestJob.BUILD_DATA
+        build = self.j.get_last_good_build()
+        self.assertIsInstance(build, Build)
+        self.assertTrue(build.get_number(), 3)
 
+    @mock.patch.object(Job, '_poll')
+    @mock.patch.object(JenkinsBase, '_poll')
+    def test_last_completed_build(self, _poll_j, _poll):
+        _poll.return_value = TestJob.JOB_DATA
+        _poll_j.return_value = TestJob.BUILD_DATA
+        build = self.j.get_last_completed_build()
+        self.assertIsInstance(build, Build)
+        self.assertTrue(build.get_number(), 3)
 if __name__ == '__main__':
     unittest.main()
