@@ -325,5 +325,12 @@ class Jenkins(JenkinsBase):
         url = self.get_plugins_url()
         return Plugins(url, self)
 
+    def install_plugins(self, new_plugins):
+        if isinstance(new_plugins, str):
+            new_plugins = [new_plugins]
+        for new_plugin in new_plugins:
+            xml = '<localPluginManager><plugin><shortName>%s</shortName></plugin></localPluginManager>' % new_plugin
+            self.requester.post_xml_and_confirm_status('%s/pluginManager/installNecessaryPlugins' % self.baseurl, data=xml)
+            
     def has_plugin(self, plugin_name):
         return plugin_name in self.get_plugins()

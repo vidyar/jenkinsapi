@@ -96,5 +96,15 @@ class TestPlugins(unittest.TestCase):
         plugin = self.J.get_plugins()['subversion']
         self.assertEquals(p, plugin)
 
+    # @mock.patch.object(Plugins, '_poll')
+    # def test_install_plugins(self, _poll_plugins):
+    def test_install_plugins(self):
+        # _poll_plugins.return_value = self.DATA
+
+        # Can we produce a repr string for this object
+        j = Jenkins('http://localhost:8080')
+        j.install_plugins('build-publisher')
+        # self.assertIsInstance(self.J.get_plugins(), Plugins)
+
 if __name__ == '__main__':
     unittest.main()
