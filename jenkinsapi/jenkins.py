@@ -326,6 +326,10 @@ class Jenkins(JenkinsBase):
     def get_executors(self, nodename):
         url = '%s/computer/%s' % (self.baseurl, nodename)
         return Executors(url, nodename, self)
+
+    def get_executors(self, nodename):
+        url = '%s/computer/%s' % (self.baseurl, nodename)
+        return Executors(url, nodename, self)
         
     def create_credential(self, username, scope=Credential.GLOBAL,
                           password=None,

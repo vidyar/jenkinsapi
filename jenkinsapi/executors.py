@@ -32,9 +32,12 @@ class Executors(JenkinsBase):
     def __iter__(self):
         for index in range(self.count):
             executor_url = '%s/executors/%s' % (self.baseurl, index)
-            yield Executor(
-                executor_url,
-                self.nodename,
-                self.jenkins,
-                index
-            )
+            try:
+                yield Executor(
+                    executor_url,
+                    self.nodename,
+                    self.jenkins,
+                    index
+                )
+            except JenkinsAPIException as exe:
+                log.error("Error querying Executors: %s", (exe,))

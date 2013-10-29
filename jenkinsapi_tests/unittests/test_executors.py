@@ -2,7 +2,6 @@ import mock
 import types
 import unittest
 
-from jenkinsapi.custom_exceptions import JenkinsAPIException
 from jenkinsapi.jenkins import Jenkins
 from jenkinsapi.executors import Executors
 from jenkinsapi.executor import Executor
