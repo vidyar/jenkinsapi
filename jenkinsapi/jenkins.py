@@ -258,8 +258,13 @@ class Jenkins(JenkinsBase):
         url = "%s/doDelete" % self.get_node_url(nodename)
         self.requester.get_and_confirm_status(url)
 
-    def create_node(self, name, num_executors=2, node_description=None,
-                    remote_fs='/var/lib/jenkins', labels=None, exclusive=False):
+    def create_node(self, name, num_executors=2,
+                    node_description='Node created using jenkinsapi',
+                    remote_fs='/var/lib/jenkins',
+                    labels='', usage=Node.TIED_TO_JOB,
+                    connect_type=Node.CONNECT_JNLP,
+                    host='localhost', port=22,
+                    username='', password=''):
         """
         Create a new slave node by name.
 
@@ -268,29 +273,37 @@ class Jenkins(JenkinsBase):
         :param node_description: a freetext field describing the node
         :param remote_fs: jenkins path, str
         :param labels: labels to associate with slave, str
-        :param exclusive: tied to specific job, boolean
+        :param usage: Set usage of the node, either Node.TIED_TO_JOB or
+            Node.USE_AS_MUCH_AS_POSSIBLE
+        :param connect_type: which method used to connect to node
         :return: node obj
         """
-        NODE_TYPE = 'hudson.slaves.DumbSlave$DescriptorImpl'
-        MODE = 'NORMAL'
+        NODE_TYPE = Node.DUMB_NODE
+        MODE = usage
         if self.has_node(name):
             return Node(nodename=name, baseurl=self.get_node_url(nodename=name), jenkins_obj=self)
-        if exclusive:
-            MODE = 'EXCLUSIVE'
+
+        launcher_config = {'stapler-class': connect_type}
+        if connect_type == Node.CONNECT_SSH:
+            launcher_config['host'] = host,
+            launcher_config['port'] = port,
+            launcher_config['username'] = username,
+            launcher_config['password'] = password
+
         params = {
             'name': name,
-            'type': NODE_TYPE,
+            'type': Node.DUMB_NODE,
             'json': json.dumps({
                 'name': name,
                 'nodeDescription': node_description,
                 'numExecutors': num_executors,
                 'remoteFS': remote_fs,
                 'labelString': labels,
-                'mode': MODE,
-                'type': NODE_TYPE,
+                'mode': usage,
+                'type': Node.DUMB_NODE,
                 'retentionStrategy': {'stapler-class': 'hudson.slaves.RetentionStrategy$Always'},
                 'nodeProperties': {'stapler-class-bag': 'true'},
-                'launcher': {'stapler-class': 'hudson.slaves.JNLPLauncher'}
+                'launcher': launcher_config
             })
         }
         url = self.get_node_url() + "doCreateItem?%s" % urllib.urlencode(params)

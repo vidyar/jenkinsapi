@@ -3,6 +3,7 @@ System tests for `jenkinsapi.jenkins` module.
 '''
 import logging
 import unittest
+from jenkinsapi.nodes import Node
 from jenkinsapi_tests.systests.base import BaseSystemTest
 from jenkinsapi_tests.test_utils.random_strings import random_string
 
@@ -10,6 +11,13 @@ log = logging.getLogger(__name__)
 
 
 class TestNodes(BaseSystemTest):
+
+    TEST_NODE_NAME = 'test_node_jenkinsapi'
+
+    def tearDown(self):
+        super(TestNodes, self).tearDown()
+        if TestNodes.TEST_NODE_NAME in self.jenkins.get_nodes():
+            self.jenkins.delete_node(TestNodes.TEST_NODE_NAME)
 
     def test_invoke_job_parameterized(self):
         node_name = random_string()
@@ -40,6 +48,14 @@ class TestNodes(BaseSystemTest):
 
         mn.set_online()  # Switch it back on
         self.assertTrue(mn.is_online())
+
+    def test_create_node(self):
+        """
+        Can we create node
+        """
+        mn = self.jenkins.create_node(name=TestNodes.TEST_NODE_NAME,
+                                      connect_type=Node.CONNECT_SSH)
+        self.assertIsInstance(mn, Node)
 
 
 if __name__ == '__main__':

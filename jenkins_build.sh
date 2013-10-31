@@ -11,4 +11,4 @@ easy_install mock
 easy_install requests
 easy_install coverage
 test -z "$WORKSPACE" && WORKSPACE="`pwd`"
-nosetests jenkinsapi_tests --with-xunit --with-coverage --cover-html --cover-html-dir="$WORKSPACE/coverage_report" --cover-package=jenkinsapi --verbose
+nosetests jenkinsapi_tests/systests/test_nodes.py --with-xunit --with-coverage --cover-html --cover-html-dir="$WORKSPACE/coverage_report" --cover-package=jenkinsapi --verbose

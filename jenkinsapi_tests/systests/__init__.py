@@ -10,11 +10,13 @@ PLUGIN_DEPENDENCIES = ["http://updates.jenkins-ci.org/latest/git.hpi",
 
 
 def setUpPackage():
-    systests_dir, _ = os.path.split(__file__)
-    war_path = os.path.join(systests_dir, 'jenkins.war')
-    state['launcher'] = JenkinsLancher(war_path, PLUGIN_DEPENDENCIES)
-    state['launcher'].start()
+    pass
+    # systests_dir, _ = os.path.split(__file__)
+    # war_path = os.path.join(systests_dir, 'jenkins.war')
+    # state['launcher'] = JenkinsLancher(war_path, PLUGIN_DEPENDENCIES)
+    # state['launcher'].start()
 
 
 def tearDownPackage():
-    state['launcher'].stop()
+    pass
+    # state['launcher'].stop()

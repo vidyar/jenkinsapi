@@ -14,6 +14,14 @@ class Node(JenkinsBase):
     Class to hold information on nodes that are attached as slaves to the master jenkins instance
     """
 
+    TIED_TO_JOB = 'EXCLUSIVE'
+    USE_AS_MUCH_AS_POSSIBLE = 'NORMAL'
+
+    DUMB_NODE = 'hudson.slaves.DumbSlave$DescriptorImpl'
+
+    CONNECT_SSH = 'hudson.plugins.sshslaves.SSHLauncher'
+    CONNECT_JNLP = 'hudson.slaves.JNLPLauncher'
+
     def __init__(self, baseurl, nodename, jenkins_obj):
         """
         Init a node object by providing all relevant pointers to it
