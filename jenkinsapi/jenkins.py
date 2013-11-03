@@ -9,7 +9,6 @@ import logging
 import urlparse
 
 from jenkinsapi import config
-from jenkinsapi.executors import Executors
 from jenkinsapi.job import Job
 from jenkinsapi.jobs import Jobs
 from jenkinsapi.node import Node
@@ -226,7 +225,7 @@ class Jenkins(JenkinsBase):
         return url
 
     def get_queue_url(self):
-        url = "%s/%s" % (self.base_server_url(), 'queue')
+        url = urlparse.urljoin(self.base_server_url(), 'queue')
         return url
 
     def get_queue(self):
@@ -322,10 +321,6 @@ class Jenkins(JenkinsBase):
 
     def has_plugin(self, plugin_name):
         return plugin_name in self.get_plugins()
-
-    def get_executors(self, nodename):
-        url = '%s/computer/%s' % (self.baseurl, nodename)
-        return Executors(url, nodename, self)
 
     def get_executors(self, nodename):
         url = '%s/computer/%s' % (self.baseurl, nodename)
