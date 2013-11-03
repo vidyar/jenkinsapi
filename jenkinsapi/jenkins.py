@@ -22,6 +22,7 @@ from jenkinsapi.fingerprint import Fingerprint
 from jenkinsapi.jenkinsbase import JenkinsBase
 from jenkinsapi.utils.requester import Requester
 from jenkinsapi.custom_exceptions import UnknownJob
+from jenkinsapi.credential import Credential
 
 log = logging.getLogger(__name__)
 
@@ -325,3 +326,130 @@ class Jenkins(JenkinsBase):
     def get_executors(self, nodename):
         url = '%s/computer/%s' % (self.baseurl, nodename)
         return Executors(url, nodename, self)
+        
+    def create_credential(self, username, scope=Credential.GLOBAL,
+                          password=None,
+                          private_key=None,
+                          private_key_location=None,
+                          private_key_user=False,
+                          passphrase='',
+                          description='Created by jenkinsapi'):
+        """
+        Create a new Credential
+
+        If password is passed - will create password based credential
+
+        :param username: credential user
+        :param scope: credential scope (Credential.GLOBAL or Credential.SYSTEM)
+        :param password: password
+        :param private_key: private key
+        :param private_key_location: location of private key on Jenkins master
+        :param private_key_user: True ti use Jenkins's user key form $HOME/.ssh
+        :param passphrase: key passphrase
+        :param description: free text description
+        :return: Credential obj
+        Password:
+        {"credentials":
+            {"scope": "GLOBAL",
+             "id": "",
+             "username": "aleksey",
+             "password": "password",
+             "description": "Created by jenkinsapi",
+             "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPassword",
+             "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPassword"}
+        }
+        ssh key:
+        {"scope": "GLOBAL",
+        "id": "",
+        "username": "aleksey",
+        "privateKeySource": {
+            "value": "0",
+            "privateKey": "dsfsdfsdfsdf",
+            "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource"
+        },
+        "passphrase": "passphrase",
+        "description": "Created by jenkinsapi",
+        "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey",
+        "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"}
+
+        ssh key from file:
+        {"scope": "GLOBAL",
+        "id": "",
+        "username": "aleksey",
+        "privateKeySource": {
+            "value": "1",
+            "privateKeyFile": "/tmp/key",
+            "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$FileOnMasterPrivateKeySource"
+        },
+        "passphrase": "VwIAFOvnXzldGvNn5T8RtQ==",
+        "description": "Created by jenkinsapi",
+        "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey",
+        "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"}
+
+        ssh key from .ssh
+        "privateKeySource": {
+            "value": "2",
+            "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$UsersPrivateKeySource"
+        }
+        """
+        cred_type = None
+        cred_suffix = None
+        if password is not None:
+            cred_type = {'password': password}
+            cred_suffix = {
+                 "description": description,
+                 "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPassword",
+                 "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPassword"}
+        elif private_key is not None:
+            cred_type = {"privateKeySource": {
+                "value": "0",
+                "privateKey": private_key,
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$DirectEntryPrivateKeySource"
+                }}
+            cred_suffix = {
+                "passphrase": passphrase,
+                "description": description,
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey",
+                "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"}
+        elif private_key_location is not None:
+            cred_type = {"privateKeySource": {
+                "value": "1",
+                "privateKeyFile": private_key_location,
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$FileOnMasterPrivateKeySource"
+            }}
+            cred_suffix = {
+                "passphrase": passphrase,
+                "description": description,
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey",
+                "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"}
+        elif private_key_user:
+            cred_type = {"privateKeySource": {
+                "value": "2",
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey$UsersPrivateKeySource"
+            }}
+            cred_suffix = {
+                "passphrase": passphrase,
+                "description": description,
+                "stapler-class": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey",
+                "kind": "com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey"}
+
+        credential = dict({'scope': scope,
+                           'id': '', 'username': username}.items() +
+                           cred_type.items() +
+                           cred_suffix.items())
+        params = {'credentials': [credential]}
+
+        data = {
+                'Submit': 'Save',
+                'json': json.dumps(params)
+        }
+        self.requester.post_and_confirm_status(self.get_credentials_url() +
+                                               '/configSubmit',
+                                               data=data)
+
+        return Credential(self.get_credentials_url(), username, self)
+
+    def get_credentials_url(self):
+        """Return the url for nodes"""
+        url = urlparse.urljoin(self.base_server_url(), 'credentials')
+        return url
