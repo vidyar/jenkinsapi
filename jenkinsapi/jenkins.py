@@ -290,6 +290,39 @@ class Jenkins(JenkinsBase):
             launcher_config['username'] = username,
             launcher_config['password'] = password
 
+
+        '''
+        {
+            "name": "aas",
+            "type": "hudson.slaves.DumbSlave"
+            "nodeDescription": "",
+            "numExecutors": "",
+            "remoteFS": "",
+            "labelString": "",
+            "mode": "NORMAL",
+            "": [
+                "hudson.plugins.sshslaves.SSHLauncher",
+                "hudson.slaves.RetentionStrategy$Always"
+            ],
+            "launcher": {
+                "stapler-class": "hudson.plugins.sshslaves.SSHLauncher",
+                "host": "aaa",
+                "credentialsId": "659ae30e-03c8-4925-bbd6-0bd20ab5846e",
+                "port": "22",
+                "javaPath": "",
+                "jvmOptions": "",
+                "prefixStartSlaveCmd": "",
+                "suffixStartSlaveCmd": ""
+            },
+            "retentionStrategy": {
+                "stapler-class": "hudson.slaves.RetentionStrategy$Always"
+            },
+            "nodeProperties": {
+                "stapler-class-bag": "true"
+            },
+        }
+        '''
+
         params = {
             'name': name,
             'type': Node.DUMB_NODE,
