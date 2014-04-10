@@ -6,6 +6,7 @@ import logging
 from jenkinsapi.node import Node
 from jenkinsapi.custom_exceptions import UnknownNode
 from jenkinsapi.jenkinsbase import JenkinsBase
+from jenkinsapi.exceptions import JenkinsAPIException
 
 log = logging.getLogger(__name__)
 
@@ -48,8 +49,7 @@ class Nodes(JenkinsBase):
             try:
                 yield item['displayName'], Node(nodeurl, nodename, self.jenkins)
             except Exception:
-                import ipdb
-                ipdb.set_trace()
+                raise JenkinsAPIException('Unable to iterate nodes')
 
     def __getitem__(self, nodename):
         self_as_dict = dict(self.iteritems())

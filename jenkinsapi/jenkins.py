@@ -130,7 +130,6 @@ class Jenkins(JenkinsBase):
     def create_job(self, jobname, config_):
         """
         Create a job
-
         alternatively you can create job using Jobs object:
         self.jobs['job_name'] = config
         :param jobname: name of new job, str
