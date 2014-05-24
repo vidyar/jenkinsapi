@@ -1,5 +1,9 @@
 #!/bin/sh
 #JENKINS_WAR_URL="http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
-JENKINS_WAR_URL="http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war"
+if [[ -z $1 ]]; then
+    JENKINS_WAR_URL="http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war"
+else
+    JENKINS_WAR_URL=$1
+fi
 
-wget $JENKINS_WAR_URL
+wget -O jenkins.war $JENKINS_WAR_URL
