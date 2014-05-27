@@ -126,3 +126,10 @@ class NotInQueue(JenkinsAPIException):
     It's a job that is not in the queue
     """
     pass
+
+
+class UnknownFolder(KeyError, NotFound):
+    """
+    Jenkins does not recognize the job requested.
+    """
+    pass

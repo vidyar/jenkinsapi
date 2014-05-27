@@ -371,6 +371,31 @@ class TestJenkins(unittest.TestCase):
         self.assertEquals(data['busyExecutors'], 59)
         self.assertEquals(data['totalExecutors'], 75)
 
+    @mock.patch.object(JenkinsBase, '_poll')
+    @mock.patch.object(Jenkins, '_poll')
+    @mock.patch.object(Job, '_poll')
+    def test_get_folders(self, _base_poll, _poll, _job_poll):
+        _poll.return_value = {
+            'jobs': [
+                {'name': 'folder_one',
+                'url': 'http://localhost:8080/job/folder_one'},
+                {'name': 'folder_two',
+                'url': 'http://localhost:8080/job/folder_two'},
+            ]
+        }
+        _base_poll.return_value = _poll.return_value
+        _job_poll.return_value = {}
+        J = Jenkins('http://localhost:8080/',
+                    username='foouser', password='foopassword')
+        for idx, (folder_name, folder) in enumerate(J.folders):
+            self.assertEquals(folder_name,
+                              _poll.return_value['jobs'][idx]['name'])
+            self.assertTrue(isinstance(folder, Folder))
+            self.assertEquals(folder.name,
+                              _poll.return_value['jobs'][idx]['name'])
+            self.assertEquals(folder.baseurl,
+                              _poll.return_value['jobs'][idx]['url'])
+
 
 class TestJenkinsURLs(unittest.TestCase):
 
