@@ -1,9 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 #JENKINS_WAR_URL="http://mirrors.jenkins-ci.org/war/latest/jenkins.war"
-if [[ -z $1 ]]; then
-    JENKINS_WAR_URL="http://mirrors.jenkins-ci.org/war-stable/latest/jenkins.war"
-else
-    JENKINS_WAR_URL=$1
+
+if [[ "$#" -ne 2 ]]; then
+    echo "Usage: $0 jenkins_url path_to_store_jenkins"
+    exit 1
 fi
 
-wget -O jenkins.war $JENKINS_WAR_URL
+readonly JENKINS_WAR_URL=$1
+readonly JENKINS_PATH=$2
+
+wget -O ${JENKINS_PATH}/jenkins.war $JENKINS_WAR_URL

@@ -80,7 +80,6 @@ class JenkinsLancher(object):
             log.info("Redownloading Jenkins")
             script_dir = os.path.join(self.war_directory,
                                       'get-jenkins-war.sh')
-            import pudb; pudb.set_trace()  # XXX BREAKPOINT
             subprocess.check_call([script_dir,
                                    self.JENKINS_WAR_URL, self.war_directory])
 
