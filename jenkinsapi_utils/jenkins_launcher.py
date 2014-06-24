@@ -12,7 +12,7 @@ import tempfile
 import requests
 import threading
 import subprocess
-import pkg_resources
+from pkg_resources import resource_string
 try:
     from urlparse import urlparse
 except ImportError:
@@ -78,18 +78,22 @@ class JenkinsLancher(object):
             log.info("We already have the War file...")
         else:
             log.info("Redownloading Jenkins")
-            subprocess.check_call('./get-jenkins-war.sh %s' % self.JENKINS_WAR_URL)
+            script_dir = os.path.join(self.war_directory,
+                                      'get-jenkins-war.sh')
+            import pudb; pudb.set_trace()  # XXX BREAKPOINT
+            subprocess.check_call([script_dir,
+                                   self.JENKINS_WAR_URL, self.war_directory])
 
     def update_config(self):
         config_dest = os.path.join(self.jenkins_home, 'config.xml')
         config_dest_file = open(config_dest, 'w')
-        config_source = pkg_resources.resource_string('jenkinsapi_tests.systests', 'config.xml')
+        config_source = resource_string('jenkinsapi_tests.systests',
+                                        'config.xml')
         try:
             config_dest_file.write(config_source.encode('UTF-8'))
         except AttributeError:
             # Python 3.x
             config_dest_file.write(config_source.decode('UTF-8'))
-
 
     def install_plugins(self):
         for i, url in enumerate(self.plugin_urls):
@@ -149,8 +153,10 @@ class JenkinsLancher(object):
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             threads = [
-                StreamThread('out', self.q, self.jenkins_process.stdout, log.info),
-                StreamThread('err', self.q, self.jenkins_process.stderr, log.warn)
+                StreamThread('out', self.q, self.jenkins_process.stdout,
+                             log.info),
+                StreamThread('err', self.q, self.jenkins_process.stderr,
+                             log.warn)
             ]
 
             # Start the threads
@@ -190,7 +196,8 @@ if __name__ == '__main__':
     log.info("Hello!")
 
     jl = JenkinsLancher(
-        '/home/sal/workspace/jenkinsapi/src/jenkinsapi_tests/systests/jenkins.war'
+        '/home/sal/workspace/jenkinsapi/src/'
+        'jenkinsapi_tests/systests/jenkins.war'
     )
     jl.start()
     log.info("Jenkins was launched...")
