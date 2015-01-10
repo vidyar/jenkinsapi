@@ -8,14 +8,15 @@ python:
  - 2.7
 
 #build_image: shippableimages/ubuntu1404_python
-
+install:
+ - sudo pip install nose mock coverage pep8 pylint
 script: 
  #- PATH=$WORKSPACE/ve/bin:/usr/local/bin:$PATH
  #- virtualenv ve
  #- . ve/bin/activate
  - sudo apt-get install -y python-dev
  - sudo easy_install -U pip
- - sudo pip install nose mock coverage pep8 pylint
+# - sudo pip install nose mock coverage pep8 pylint
  - sudo python setup.py develop
  - pylint --rcfile=pylintrc jenkinsapi/*.py --disable R0912
  - pep8 --ignore=E501 jenkinsapi/*.py
