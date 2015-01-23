@@ -23,7 +23,7 @@ script:
  - sudo python setup.py develop
  - pylint --rcfile=pylintrc jenkinsapi/*.py --disable R0912
  - pep8 --ignore=E501 jenkinsapi/*.py
- - mkdir -p vidyar/testresults vidyar/codecoverage
- - nosetests jenkinsapi_tests --with-coverage --cover-package=jenkinsapi  --with-xunit --xunit-file=vidyar/testresults/nosetests.xml
+ - mkdir -p shippable/testresults shippable/codecoverage
+ - nosetests jenkinsapi_tests --with-coverage --cover-package=jenkinsapi  --with-xunit --xunit-file=shippable/testresults/nosetests.xml
 
- - coverage xml -o vidyar/codecoverage/coverage.xml
+ - coverage xml -o shippable/codecoverage/coverage.xml
